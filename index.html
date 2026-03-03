@@ -1,0 +1,1396 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Algorithms & Data Structures Dashboard</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f8fafc;
+      --card: #ffffff;
+      --border: #e2e8f0;
+      --text: #1e293b;
+      --text-muted: #64748b;
+      --primary: #0f172a;
+      --accent: #3b82f6;
+      --accent-hover: #2563eb;
+      --success: #22c55e;
+      --compare: #f59e0b;
+      --swap: #ef4444;
+      --current: #8b5cf6;
+      --shadow: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-lg: 0 10px 40px -10px rgba(0,0,0,0.12);
+      --radius: 12px;
+      --radius-sm: 8px;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'DM Sans', -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      line-height: 1.5;
+    }
+
+    .layout {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 24px 16px;
+    }
+
+    header {
+      margin-bottom: 32px;
+      padding-bottom: 24px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    header h1 {
+      font-size: 1.75rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    header p {
+      margin-top: 4px;
+      color: var(--text-muted);
+      font-size: 0.95rem;
+    }
+
+    /* Tabs */
+    .tabs {
+      display: flex;
+      gap: 4px;
+      margin-bottom: 24px;
+      background: var(--card);
+      padding: 4px;
+      border-radius: var(--radius);
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
+
+    .tab {
+      flex: 1;
+      padding: 12px 20px;
+      border: none;
+      background: transparent;
+      font-family: inherit;
+      font-size: 0.95rem;
+      font-weight: 500;
+      color: var(--text-muted);
+      cursor: pointer;
+      border-radius: var(--radius-sm);
+      transition: all 0.2s ease;
+    }
+
+    .tab:hover {
+      color: var(--text);
+    }
+
+    .tab.active {
+      background: var(--primary);
+      color: white;
+    }
+
+    .panel {
+      display: none;
+    }
+
+    .panel.active {
+      display: block;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow);
+      padding: 24px;
+      margin-bottom: 24px;
+    }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      margin-bottom: 16px;
+      color: var(--primary);
+    }
+
+    /* Controls */
+    .controls {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 16px;
+      align-items: flex-end;
+      margin-bottom: 20px;
+    }
+
+    .control-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .control-group label {
+      font-size: 0.8rem;
+      font-weight: 500;
+      color: var(--text-muted);
+    }
+
+    .control-group input,
+    .control-group select {
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+      min-width: 120px;
+    }
+
+    .control-group input:focus,
+    .control-group select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+    }
+
+    .btn {
+      padding: 10px 18px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+      font-weight: 500;
+      cursor: pointer;
+      transition: all 0.2s ease;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: white;
+    }
+
+    .btn-primary:hover:not(:disabled) {
+      background: var(--accent-hover);
+    }
+
+    .btn-secondary {
+      background: var(--card);
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn-secondary:hover:not(:disabled) {
+      background: var(--bg);
+    }
+
+    .btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .btn-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    /* Visualization area */
+    .viz-area {
+      min-height: 220px;
+      padding: 24px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 4px;
+      margin-bottom: 20px;
+    }
+
+    .bar {
+      background: var(--accent);
+      min-width: 24px;
+      border-radius: 4px 4px 0 0;
+      transition: height 0.15s ease, background 0.2s ease;
+    }
+
+    .bar.compare {
+      background: var(--compare);
+    }
+
+    .bar.swap {
+      background: var(--swap);
+    }
+
+    .bar.current {
+      background: var(--current);
+    }
+
+    .bar.found {
+      background: var(--success);
+    }
+
+    .bar.sorted {
+      background: var(--success);
+    }
+
+    /* Stack / Queue / List items */
+    .ds-viz {
+      min-height: 180px;
+      padding: 20px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+      display: flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 20px;
+    }
+    .stack-item, .queue-cell {
+      min-width: 48px;
+      padding: 12px;
+      background: var(--accent);
+      color: white;
+      border-radius: var(--radius-sm);
+      font-weight: 600;
+      text-align: center;
+      transition: transform 0.2s, background 0.2s;
+    }
+    .stack-item.highlight, .queue-cell.highlight { background: var(--current); }
+    .list-viz { display: flex; align-items: center; justify-content: center; flex-wrap: wrap; gap: 4px; min-height: 120px; padding: 20px; }
+    .list-node {
+      display: flex; align-items: center; gap: 0; background: var(--card); border: 2px solid var(--accent);
+      border-radius: var(--radius-sm); padding: 8px 12px; font-weight: 600;
+    }
+    .list-node.next::after { content: ' →'; color: var(--text-muted); }
+    .list-node.highlight { border-color: var(--current); background: #f5f3ff; }
+    .hash-viz { display: grid; grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); gap: 8px; padding: 16px; min-height: 140px; }
+    .hash-bucket { border: 1px solid var(--border); border-radius: var(--radius-sm); padding: 8px; min-height: 44px; }
+    .hash-bucket .chain-item { display: block; margin: 4px 0; padding: 4px 8px; background: var(--accent); color: white; border-radius: 4px; font-size: 0.85rem; }
+    .sub-topic { font-size: 0.85rem; color: var(--text-muted); margin-top: 8px; }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .stat {
+      padding: 12px;
+      background: var(--bg);
+      border-radius: var(--radius-sm);
+      border: 1px solid var(--border);
+    }
+
+    .stat-label {
+      font-size: 0.75rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+
+    .stat-value {
+      font-size: 1.25rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .complexity {
+      font-size: 0.85rem;
+      color: var(--text-muted);
+      margin-top: 8px;
+    }
+
+    .complexity code {
+      background: var(--bg);
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+    }
+
+    /* Description */
+    .description {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-top: 16px;
+      padding-top: 16px;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Custom input */
+    .custom-array-input {
+      width: 100%;
+      max-width: 400px;
+      padding: 10px 14px;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      font-family: inherit;
+      font-size: 0.9rem;
+    }
+
+    .custom-array-input:focus {
+      outline: none;
+      border-color: var(--accent);
+    }
+
+    .custom-hint {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      margin-top: 4px;
+    }
+
+    /* Search target (only in search panel) */
+    .search-target-row {
+      margin-bottom: 16px;
+    }
+
+    @media (max-width: 640px) {
+      .controls {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .control-group input,
+      .control-group select {
+        min-width: 0;
+      }
+
+      .viz-area {
+        gap: 2px;
+        padding: 16px;
+      }
+
+      .bar {
+        min-width: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="layout">
+    <header>
+      <h1>Algorithms & Data Structures Dashboard</h1>
+      <p>Search, sort, stacks, lists, hash tables, queues — step-by-step visualization</p>
+    </header>
+
+    <div class="tabs" style="flex-wrap: wrap;">
+      <button class="tab active" data-tab="search">Search</button>
+      <button class="tab" data-tab="sort">Sorting</button>
+      <button class="tab" data-tab="stack">Stack</button>
+      <button class="tab" data-tab="list">Linked List</button>
+      <button class="tab" data-tab="hash">Hash</button>
+      <button class="tab" data-tab="queue">Queue</button>
+    </div>
+
+    <!-- ========== SEARCH PANEL ========== -->
+    <div id="panel-search" class="panel active">
+      <div class="card">
+        <div class="card-title">Controls</div>
+        <div class="search-target-row control-group">
+          <label>Target value</label>
+          <input type="number" id="search-target" value="42" min="-999" max="999" placeholder="Value to find">
+        </div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Array size</label>
+            <input type="number" id="search-size" value="16" min="5" max="40">
+          </div>
+          <div class="control-group">
+            <label>Speed (ms)</label>
+            <input type="number" id="search-speed" value="400" min="100" max="2000" step="100">
+          </div>
+          <div class="control-group">
+            <label>Algorithm</label>
+            <select id="search-algo">
+              <option value="linear">Linear Search</option>
+              <option value="binary">Binary Search</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Array (comma-separated, or leave empty for random)</label>
+            <input type="text" id="search-custom-array" class="custom-array-input" placeholder="e.g. 1, 5, 8, 12, 20">
+            <span class="custom-hint">Leave empty for random. For Binary Search the array is sorted.</span>
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary" id="search-generate">New array</button>
+            <button class="btn btn-primary" id="search-start">Start</button>
+            <button class="btn btn-secondary" id="search-pause">Pause</button>
+            <button class="btn btn-secondary" id="search-reset">Reset</button>
+          </div>
+        </div>
+
+        <div class="stats" id="search-stats">
+          <div class="stat"><div class="stat-label">Steps</div><div class="stat-value" id="search-steps">0</div></div>
+          <div class="stat"><div class="stat-label">Result</div><div class="stat-value" id="search-result">—</div></div>
+          <div class="stat"><div class="stat-label">Time</div><div class="stat-value" id="search-time">—</div></div>
+          <div class="stat"><div class="complexity" id="search-complexity">—</div></div>
+        </div>
+
+        <div class="viz-area" id="search-viz"></div>
+        <div class="description" id="search-description">
+          <strong>Linear Search:</strong> scan elements in order. Time: O(n).<br>
+          <strong>Binary Search:</strong> halve the sorted range each step. Time: O(log n).
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== SORT PANEL ========== -->
+    <div id="panel-sort" class="panel">
+      <div class="card">
+        <div class="card-title">Controls</div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Array size</label>
+            <input type="number" id="sort-size" value="16" min="5" max="40">
+          </div>
+          <div class="control-group">
+            <label>Speed (ms)</label>
+            <input type="number" id="sort-speed" value="300" min="50" max="2000" step="50">
+          </div>
+          <div class="control-group">
+            <label>Algorithm</label>
+            <select id="sort-algo">
+              <option value="bubble">Bubble Sort</option>
+              <option value="selection">Selection Sort</option>
+              <option value="insertion">Insertion Sort</option>
+              <option value="radix">Radix Sort</option>
+              <option value="counting">Counting Sort</option>
+              <option value="merge">Merge Sort</option>
+              <option value="quick">Quick Sort</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Array (comma-separated, or empty)</label>
+            <input type="text" id="sort-custom-array" class="custom-array-input" placeholder="e.g. 5, 2, 9, 1, 7">
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-secondary" id="sort-generate">New array</button>
+            <button class="btn btn-primary" id="sort-start">Start</button>
+            <button class="btn btn-secondary" id="sort-pause">Pause</button>
+            <button class="btn btn-secondary" id="sort-reset">Reset</button>
+          </div>
+        </div>
+
+        <div class="stats" id="sort-stats">
+          <div class="stat"><div class="stat-label">Comparisons</div><div class="stat-value" id="sort-comparisons">0</div></div>
+          <div class="stat"><div class="stat-label">Swaps</div><div class="stat-value" id="sort-swaps">0</div></div>
+          <div class="stat"><div class="stat-label">Time</div><div class="stat-value" id="sort-time">—</div></div>
+          <div class="stat"><div class="complexity" id="sort-complexity">—</div></div>
+        </div>
+
+        <div class="viz-area" id="sort-viz"></div>
+        <div class="description" id="sort-description"></div>
+      </div>
+    </div>
+
+    <!-- ========== STACK PANEL ========== -->
+    <div id="panel-stack" class="panel">
+      <div class="card">
+        <div class="card-title">Stack — Insertion (Push) & Deletion (Pop)</div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Value to push (number)</label>
+            <input type="number" id="stack-push-val" value="10" placeholder="Value">
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="stack-push">Push</button>
+            <button class="btn btn-secondary" id="stack-pop">Pop</button>
+            <button class="btn btn-secondary" id="stack-clear">Clear</button>
+          </div>
+        </div>
+        <div class="ds-viz" id="stack-viz"></div>
+        <div class="card-title">Polish Notation / Reverse Polish — Evaluation</div>
+        <div class="control-group" style="margin-bottom:12px">
+          <label>RPN expression (e.g. 3 4 + 2 *)</label>
+          <input type="text" id="rpn-expr" class="custom-array-input" value="3 4 + 2 *" placeholder="3 4 + 2 *">
+          <button class="btn btn-primary" style="margin-top:8px" id="rpn-eval">Evaluate RPN</button>
+        </div>
+        <div class="description">
+          <strong>Stack:</strong> LIFO. Push adds on top, Pop removes from top. Used in Polish (prefix) and Reverse Polish (postfix) notation evaluation and recursion (call stack).
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== LINKED LIST PANEL ========== -->
+    <div id="panel-list" class="panel">
+      <div class="card">
+        <div class="card-title">Linked List — Insertion, Deletion, Searching</div>
+        <div class="controls">
+          <div class="control-group">
+            <label>List type</label>
+            <select id="list-type">
+              <option value="singly">Singly Linked</option>
+              <option value="doubly">Double Linked List</option>
+              <option value="circular">Circular Linked List</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Value (insert at head or search)</label>
+            <input type="number" id="list-val" value="5" placeholder="Value">
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="list-insert">Insert (head)</button>
+            <button class="btn btn-secondary" id="list-delete">Delete (by value)</button>
+            <button class="btn btn-secondary" id="list-search">Search</button>
+            <button class="btn btn-secondary" id="list-reset">Reset</button>
+          </div>
+        </div>
+        <div class="list-viz" id="list-viz"></div>
+        <div class="description">
+          <strong>Singly:</strong> each node points to next. <strong>Double:</strong> prev and next. <strong>Circular:</strong> last node points to head. Insert/delete O(1) at head; search O(n).
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== HASH PANEL ========== -->
+    <div id="panel-hash" class="panel">
+      <div class="card">
+        <div class="card-title">Hash Function — Open Hashing (Chaining) & Closed Hashing</div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Method</label>
+            <select id="hash-method">
+              <option value="open">Open Hashing (Chaining)</option>
+              <option value="closed">Closed Hashing (Linear Probing)</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Key to insert (number)</label>
+            <input type="number" id="hash-key" value="17" placeholder="Key">
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="hash-insert">Insert</button>
+            <button class="btn btn-secondary" id="hash-reset">Reset</button>
+          </div>
+        </div>
+        <div class="hash-viz" id="hash-viz"></div>
+        <div class="description">
+          <strong>Open hashing (chaining):</strong> collisions stored in linked lists per bucket. <strong>Closed hashing (linear probing):</strong> on collision, probe next slot until free.
+        </div>
+      </div>
+    </div>
+
+    <!-- ========== QUEUE PANEL ========== -->
+    <div id="panel-queue" class="panel">
+      <div class="card">
+        <div class="card-title">Queue — Insertion (Enqueue) & Deletion (Dequeue). Circular Queue</div>
+        <div class="controls">
+          <div class="control-group">
+            <label>Queue type</label>
+            <select id="queue-type">
+              <option value="linear">Linear Queue</option>
+              <option value="circular">Circular Queue</option>
+            </select>
+          </div>
+          <div class="control-group">
+            <label>Value to enqueue</label>
+            <input type="number" id="queue-val" value="10" placeholder="Value">
+          </div>
+          <div class="btn-group">
+            <button class="btn btn-primary" id="queue-enqueue">Enqueue</button>
+            <button class="btn btn-secondary" id="queue-dequeue">Dequeue</button>
+            <button class="btn btn-secondary" id="queue-reset">Reset</button>
+          </div>
+        </div>
+        <div class="ds-viz" id="queue-viz"></div>
+        <div class="description">
+          <strong>Queue:</strong> FIFO. Enqueue at rear, Dequeue from front. <strong>Circular queue:</strong> reuse slots using modulo; avoids shifting.
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // ========== UTILS ==========
+    function randomArray(len, min = 10, max = 100) {
+      return Array.from({ length: len }, () => Math.floor(Math.random() * (max - min + 1)) + min);
+    }
+
+    function parseCustomArray(str) {
+      if (!str || !str.trim()) return null;
+      const parts = str.split(/[\s,]+/).map(s => parseInt(s.trim(), 10));
+      return parts.every(n => !isNaN(n)) ? parts : null;
+    }
+
+    function sleep(ms) {
+      return new Promise(resolve => setTimeout(resolve, ms));
+    }
+
+    // ========== SEARCH STATE ==========
+    let searchState = {
+      array: [],
+      target: 42,
+      running: false,
+      paused: false,
+      steps: 0,
+      startTime: 0,
+      animQueue: [],
+      timeoutId: null
+    };
+
+    const searchDescriptions = {
+      linear: 'Linear Search: sequential scan. Time: O(n), space: O(1).',
+      binary: 'Binary Search: halve the sorted range each step. Time: O(log n), space: O(1).'
+    };
+
+    const searchComplexity = {
+      linear: 'O(n)',
+      binary: 'O(log n)'
+    };
+
+    // ========== SEARCH RENDER ==========
+    function renderSearchBars(arr, state = {}) {
+      const container = document.getElementById('search-viz');
+      container.innerHTML = '';
+      const maxVal = Math.max(...arr, 1);
+      arr.forEach((val, i) => {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = `${(val / maxVal) * 160}px`;
+        bar.title = `${i}: ${val}`;
+        if (state.current === i) bar.classList.add('current');
+        if (state.found === i) bar.classList.add('found');
+        if (state.checked !== undefined && state.checked.includes(i)) bar.classList.add('compare');
+        const label = document.createElement('div');
+        label.style.cssText = 'font-size:10px;text-align:center;margin-top:4px;';
+        label.textContent = val;
+        bar.appendChild(label);
+        container.appendChild(bar);
+      });
+    }
+
+    function updateSearchStats(steps, result, elapsed, algo) {
+      document.getElementById('search-steps').textContent = steps;
+      document.getElementById('search-result').textContent = result;
+      document.getElementById('search-time').textContent = elapsed >= 0 ? `${elapsed} ms` : '—';
+      document.getElementById('search-complexity').innerHTML = `Complexity: <code>${searchComplexity[algo] || ''}</code>`;
+    }
+
+    // ========== SEARCH ALGORITHMS (generators for stepping) ==========
+    function* linearSearchGen(arr, target) {
+      for (let i = 0; i < arr.length; i++) {
+        yield { type: 'check', index: i };
+        if (arr[i] === target) {
+          yield { type: 'found', index: i };
+          return;
+        }
+      }
+      yield { type: 'notfound' };
+    }
+
+    function* binarySearchGen(arr, target) {
+      let left = 0, right = arr.length - 1;
+      const sorted = [...arr].sort((a, b) => a - b);
+      while (left <= right) {
+        const mid = Math.floor((left + right) / 2);
+        yield { type: 'check', index: mid, sorted };
+        if (sorted[mid] === target) {
+          yield { type: 'found', index: mid, sorted };
+          return;
+        }
+        if (sorted[mid] < target) left = mid + 1;
+        else right = mid - 1;
+      }
+      yield { type: 'notfound', sorted };
+    }
+
+    async function runSearch() {
+      const algo = document.getElementById('search-algo').value;
+      const speed = parseInt(document.getElementById('search-speed').value, 10);
+      const arr = [...searchState.array];
+      const target = parseInt(document.getElementById('search-target').value, 10);
+      if (isNaN(target)) return;
+
+      searchState.steps = 0;
+      searchState.startTime = performance.now();
+      updateSearchStats(0, '…', -1, algo);
+
+      const gen = algo === 'binary' ? binarySearchGen(arr, target) : linearSearchGen(arr, target);
+      let displayArr = algo === 'binary' ? [...arr].sort((a, b) => a - b) : arr;
+      let foundIndex = -1;
+
+      try {
+        for (const step of gen) {
+          while (searchState.paused) await sleep(100);
+          if (!searchState.running) return;
+
+          if (step.sorted) displayArr = step.sorted;
+
+          if (step.type === 'check') {
+            searchState.steps++;
+            updateSearchStats(searchState.steps, '…', -1, algo);
+            renderSearchBars(displayArr, { current: step.index });
+            await sleep(speed);
+          } else if (step.type === 'found') {
+            foundIndex = step.index;
+            updateSearchStats(searchState.steps, `Index ${step.index}`, -1, algo);
+            renderSearchBars(displayArr, { found: step.index });
+            break;
+          } else if (step.type === 'notfound') {
+            updateSearchStats(searchState.steps, 'Not found', -1, algo);
+            renderSearchBars(displayArr, {});
+            break;
+          }
+        }
+
+        const elapsed = Math.round(performance.now() - searchState.startTime);
+        updateSearchStats(searchState.steps, foundIndex >= 0 ? `Index ${foundIndex}` : 'Not found', elapsed, algo);
+      } finally {
+        searchState.running = false;
+        document.getElementById('search-pause').textContent = 'Pause';
+      }
+    }
+
+    // ========== SORT STATE ==========
+    let sortState = {
+      array: [],
+      running: false,
+      paused: false,
+      comparisons: 0,
+      swaps: 0,
+      startTime: 0,
+      timeoutId: null
+    };
+
+    const sortDescriptions = {
+      bubble: 'Bubble Sort: compare adjacent pairs, larger bubbles up. Time: O(n²), space: O(1).',
+      selection: 'Selection Sort: repeatedly select minimum from unsorted and swap. Time: O(n²), space: O(1).',
+      insertion: 'Insertion Sort: build sorted prefix by inserting one element at a time. Time: O(n²), space: O(1).',
+      radix: 'Radix Sort: sort by digits (LSB to MSB). Time: O(n·k), space: O(n+k).',
+      counting: 'Counting Sort: count frequencies then place in order. Time: O(n+k), space: O(k).',
+      merge: 'Merge Sort: divide and merge sorted halves. Time: O(n log n), space: O(n).',
+      quick: 'Quick Sort: pivot and partition. Time: O(n log n) avg, space: O(log n).'
+    };
+
+    const sortComplexity = {
+      bubble: 'O(n²) / O(1)',
+      selection: 'O(n²) / O(1)',
+      insertion: 'O(n²) / O(1)',
+      radix: 'O(n·k) / O(n+k)',
+      counting: 'O(n+k) / O(k)',
+      merge: 'O(n log n) / O(n)',
+      quick: 'O(n log n) avg / O(log n)'
+    };
+
+    // ========== SORT RENDER ==========
+    function renderSortBars(arr, state = {}) {
+      const container = document.getElementById('sort-viz');
+      container.innerHTML = '';
+      const maxVal = Math.max(...arr, 1);
+      arr.forEach((val, i) => {
+        const bar = document.createElement('div');
+        bar.className = 'bar';
+        bar.style.height = `${(val / maxVal) * 160}px`;
+        bar.title = `${i}: ${val}`;
+        if (state.compare && (state.compare[0] === i || state.compare[1] === i)) bar.classList.add('compare');
+        if (state.swap && (state.swap[0] === i || state.swap[1] === i)) bar.classList.add('swap');
+        if (state.sorted && state.sorted.includes(i)) bar.classList.add('sorted');
+        if (state.pivot === i) bar.classList.add('current');
+        const label = document.createElement('div');
+        label.style.cssText = 'font-size:10px;text-align:center;margin-top:4px;';
+        label.textContent = val;
+        bar.appendChild(label);
+        container.appendChild(bar);
+      });
+    }
+
+    function updateSortStats(comparisons, swaps, elapsed, algo) {
+      document.getElementById('sort-comparisons').textContent = comparisons;
+      document.getElementById('sort-swaps').textContent = swaps;
+      document.getElementById('sort-time').textContent = elapsed >= 0 ? `${elapsed} ms` : '—';
+      document.getElementById('sort-complexity').innerHTML = `Time / space: <code>${sortComplexity[algo] || ''}</code>`;
+    }
+
+    // ========== SORT ALGORITHMS (yield state for visualization) ==========
+    function* bubbleSortGen(arr) {
+      const a = [...arr];
+      const n = a.length;
+      let comparisons = 0, swaps = 0;
+      for (let i = 0; i < n - 1; i++) {
+        for (let j = 0; j < n - 1 - i; j++) {
+          comparisons++;
+          yield { arr: [...a], compare: [j, j + 1], comparisons, swaps };
+          if (a[j] > a[j + 1]) {
+            [a[j], a[j + 1]] = [a[j + 1], a[j]];
+            swaps++;
+            yield { arr: [...a], swap: [j, j + 1], comparisons, swaps };
+          }
+        }
+        yield { arr: [...a], sorted: Array.from({ length: i + 1 }, (_, k) => n - 1 - k), comparisons, swaps };
+      }
+      yield { arr: [...a], sorted: Array.from({ length: n }, (_, k) => k), comparisons, swaps };
+    }
+
+    function* selectionSortGen(arr) {
+      const a = [...arr];
+      const n = a.length;
+      let comparisons = 0, swaps = 0;
+      for (let i = 0; i < n - 1; i++) {
+        let minIdx = i;
+        for (let j = i + 1; j < n; j++) {
+          comparisons++;
+          yield { arr: [...a], compare: [minIdx, j], comparisons, swaps };
+          if (a[j] < a[minIdx]) minIdx = j;
+        }
+        if (minIdx !== i) {
+          [a[i], a[minIdx]] = [a[minIdx], a[i]];
+          swaps++;
+          yield { arr: [...a], swap: [i, minIdx], comparisons, swaps };
+        }
+        yield { arr: [...a], sorted: [i], comparisons, swaps };
+      }
+      yield { arr: [...a], sorted: Array.from({ length: n }, (_, k) => k), comparisons, swaps };
+    }
+
+    function* insertionSortGen(arr) {
+      const a = [...arr];
+      const n = a.length;
+      let comparisons = 0, swaps = 0;
+      for (let i = 1; i < n; i++) {
+        let j = i;
+        while (j > 0) {
+          comparisons++;
+          yield { arr: [...a], compare: [j - 1, j], comparisons, swaps };
+          if (a[j - 1] <= a[j]) break;
+          [a[j - 1], a[j]] = [a[j], a[j - 1]];
+          swaps++;
+          yield { arr: [...a], swap: [j - 1, j], comparisons, swaps };
+          j--;
+        }
+        yield { arr: [...a], sorted: Array.from({ length: i + 1 }, (_, k) => k), comparisons, swaps };
+      }
+      yield { arr: [...a], sorted: Array.from({ length: n }, (_, k) => k), comparisons, swaps };
+    }
+
+    // Merge sort with yield at each merge step
+    function* mergeSortGen(arr) {
+      const a = [...arr];
+      let comparisons = 0, swaps = 0;
+
+      function* merge(l, m, r) {
+        const left = a.slice(l, m + 1);
+        const right = a.slice(m + 1, r + 1);
+        let i = 0, j = 0, k = l;
+        while (i < left.length && j < right.length) {
+          comparisons++;
+          yield { arr: [...a], compare: [k, (m + 1 + j)], comparisons, swaps };
+          if (left[i] <= right[j]) {
+            a[k++] = left[i++];
+          } else {
+            a[k++] = right[j++];
+            swaps += (m + 1 - l) - i;
+          }
+          yield { arr: [...a], swap: [k - 1, k - 1], comparisons, swaps };
+        }
+        while (i < left.length) a[k++] = left[i++];
+        while (j < right.length) a[k++] = right[j++];
+        yield { arr: [...a], sorted: Array.from({ length: r - l + 1 }, (_, i) => l + i), comparisons, swaps };
+      }
+
+      function* sortGen(l, r) {
+        if (l >= r) return;
+        const m = Math.floor((l + r) / 2);
+        yield* sortGen(l, m);
+        yield* sortGen(m + 1, r);
+        yield* merge(l, m, r);
+      }
+
+      yield* sortGen(0, a.length - 1);
+    }
+
+    function* quickSortGen(arr) {
+      const a = [...arr];
+      let comparisons = 0, swaps = 0;
+
+      function* partition(low, high) {
+        const pivot = a[high];
+        let i = low - 1;
+        for (let j = low; j < high; j++) {
+          comparisons++;
+          yield { arr: [...a], compare: [j, high], pivot: high, comparisons, swaps };
+          if (a[j] < pivot) {
+            i++;
+            [a[i], a[j]] = [a[j], a[i]];
+            swaps++;
+            if (i !== j) yield { arr: [...a], swap: [i, j], pivot: high, comparisons, swaps };
+          }
+        }
+        [a[i + 1], a[high]] = [a[high], a[i + 1]];
+        swaps++;
+        yield { arr: [...a], swap: [i + 1, high], pivot: high, comparisons, swaps };
+        return i + 1;
+      }
+
+      function* sortGen(low, high) {
+        if (low < high) {
+          const pi = yield* partition(low, high);
+          yield* sortGen(low, pi - 1);
+          yield* sortGen(pi + 1, high);
+        }
+      }
+
+      yield* sortGen(0, a.length - 1);
+      yield { arr: [...a], sorted: Array.from({ length: a.length }, (_, k) => k), comparisons, swaps };
+    }
+
+    function* radixSortGen(arr) {
+      const a = arr.map((v, i) => ({ v, i }));
+      const maxVal = Math.max(...arr, 1);
+      let comparisons = 0, swaps = 0;
+      for (let exp = 1; Math.floor(maxVal / exp) > 0; exp *= 10) {
+        const buckets = Array.from({ length: 10 }, () => []);
+        for (const obj of a) {
+          const digit = Math.floor(obj.v / exp) % 10;
+          buckets[digit].push(obj);
+        }
+        let idx = 0;
+        for (const bucket of buckets) {
+          for (const obj of bucket) {
+            a[idx++] = obj;
+            swaps++;
+            yield { arr: a.map(x => x.v), comparisons, swaps };
+          }
+        }
+      }
+      yield { arr: a.map(x => x.v), sorted: Array.from({ length: a.length }, (_, k) => k), comparisons, swaps };
+    }
+
+    function* countingSortGen(arr) {
+      const a = [...arr];
+      if (a.length === 0) { yield { arr: [], sorted: [], comparisons: 0, swaps: 0 }; return; }
+      const min = Math.min(...a), max = Math.max(...a);
+      const range = max - min + 1;
+      const count = Array(range).fill(0);
+      let comparisons = 0, swaps = 0;
+      for (const v of a) count[v - min]++;
+      let outIdx = 0;
+      for (let i = 0; i < range; i++) {
+        while (count[i] > 0) {
+          a[outIdx] = i + min;
+          count[i]--;
+          outIdx++;
+          swaps++;
+          yield { arr: [...a], comparisons, swaps };
+        }
+      }
+      yield { arr: [...a], sorted: Array.from({ length: a.length }, (_, k) => k), comparisons, swaps };
+    }
+
+    async function runSort() {
+      const algo = document.getElementById('sort-algo').value;
+      const speed = parseInt(document.getElementById('sort-speed').value, 10);
+      const arr = [...sortState.array];
+
+      sortState.comparisons = 0;
+      sortState.swaps = 0;
+      sortState.startTime = performance.now();
+      updateSortStats(0, 0, -1, algo);
+
+      let gen;
+      switch (algo) {
+        case 'bubble': gen = bubbleSortGen(arr); break;
+        case 'selection': gen = selectionSortGen(arr); break;
+        case 'insertion': gen = insertionSortGen(arr); break;
+        case 'radix': gen = radixSortGen(arr); break;
+        case 'counting': gen = countingSortGen([...arr]); break;
+        case 'merge': gen = mergeSortGen(arr); break;
+        case 'quick': gen = quickSortGen(arr); break;
+        default: return;
+      }
+
+      try {
+        let step, last;
+        while (!(step = gen.next()).done) {
+          while (sortState.paused) await sleep(100);
+          if (!sortState.running) return;
+          last = step.value;
+          const s = last;
+          if (s.comparisons !== undefined) sortState.comparisons = s.comparisons;
+          if (s.swaps !== undefined) sortState.swaps = s.swaps;
+          updateSortStats(sortState.comparisons, sortState.swaps, -1, algo);
+          renderSortBars(s.arr || sortState.array, {
+            compare: s.compare,
+            swap: s.swap,
+            sorted: s.sorted,
+            pivot: s.pivot
+          });
+          await sleep(speed);
+        }
+        if (last && last.arr) {
+          renderSortBars(last.arr, { sorted: Array.from({ length: last.arr.length }, (_, k) => k) });
+          if (last.comparisons !== undefined) sortState.comparisons = last.comparisons;
+          if (last.swaps !== undefined) sortState.swaps = last.swaps;
+        }
+        const elapsed = Math.round(performance.now() - sortState.startTime);
+        updateSortStats(sortState.comparisons, sortState.swaps, elapsed, algo);
+      } finally {
+        sortState.running = false;
+        document.getElementById('sort-pause').textContent = 'Pause';
+      }
+    }
+
+    // ========== STACK ==========
+    let stackData = [];
+    function renderStack() {
+      const el = document.getElementById('stack-viz');
+      el.innerHTML = '';
+      stackData.forEach((v, i) => {
+        const d = document.createElement('div');
+        d.className = 'stack-item';
+        d.textContent = v;
+        el.appendChild(d);
+      });
+    }
+    document.getElementById('stack-push').addEventListener('click', () => {
+      const v = document.getElementById('stack-push-val').value;
+      if (v === '' && v !== 0) return;
+      stackData.push(Number(v));
+      renderStack();
+    });
+    document.getElementById('stack-pop').addEventListener('click', () => {
+      if (stackData.length) stackData.pop();
+      renderStack();
+    });
+    document.getElementById('stack-clear').addEventListener('click', () => { stackData = []; renderStack(); });
+    document.getElementById('rpn-eval').addEventListener('click', () => {
+      const tok = document.getElementById('rpn-expr').value.trim().split(/\s+/);
+      const st = [];
+      for (const t of tok) {
+        if (/^-?\d+$/.test(t)) st.push(Number(t));
+        else if (t === '+') st.push(st.pop() + st.pop());
+        else if (t === '-') { const b = st.pop(); st.push(st.pop() - b); }
+        else if (t === '*') st.push(st.pop() * st.pop());
+        else if (t === '/') { const b = st.pop(); st.push(st.pop() / b); }
+      }
+      alert(st.length === 1 ? 'Result: ' + st[0] : 'Invalid RPN');
+    });
+
+    // ========== LINKED LIST ==========
+    let listHead = null;
+    function listNode(val, next = null, prev = null) {
+      return { val, next, prev };
+    }
+    function getListType() { return document.getElementById('list-type').value; }
+    function renderList(highlightIdx = -1) {
+      const el = document.getElementById('list-viz');
+      el.innerHTML = '';
+      const type = getListType();
+      let p = listHead, i = 0;
+      const seen = new Set();
+      while (p && !seen.has(p)) {
+        seen.add(p);
+        const d = document.createElement('div');
+        d.className = 'list-node' + (type !== 'singly' ? '' : ' next');
+        if (highlightIdx === i) d.classList.add('highlight');
+        d.textContent = p.val;
+        el.appendChild(d);
+        p = p.next;
+        if (type === 'circular' && p === listHead) break;
+        i++;
+      }
+    }
+    document.getElementById('list-insert').addEventListener('click', () => {
+      const v = Number(document.getElementById('list-val').value);
+      const type = getListType();
+      const node = listNode(v, listHead, null);
+      if (listHead && type === 'doubly') listHead.prev = node;
+      const oldHead = listHead;
+      listHead = node;
+      if (type === 'circular') {
+        if (!oldHead) listHead.next = listHead;
+        else {
+          let tail = oldHead;
+          while (tail.next !== oldHead) tail = tail.next;
+          tail.next = listHead;
+          listHead.next = oldHead;
+          if (type === 'doubly') oldHead.prev = listHead;
+        }
+      }
+      renderList();
+    });
+    document.getElementById('list-delete').addEventListener('click', () => {
+      const v = Number(document.getElementById('list-val').value);
+      const type = getListType();
+      if (!listHead) return;
+      if (listHead.val === v) {
+        listHead = listHead.next;
+        if (listHead && type === 'doubly') listHead.prev = null;
+        if (type === 'circular' && listHead === listHead.next) listHead = null;
+        renderList();
+        return;
+      }
+      let p = listHead;
+      while (p.next && p.next.val !== v) p = p.next;
+      if (p.next) {
+        if (type === 'doubly') p.next.next && (p.next.next.prev = p);
+        p.next = p.next.next;
+        if (type === 'circular') { let t = listHead; while (t.next !== listHead) t = t.next; t.next = listHead; }
+      }
+      renderList();
+    });
+    document.getElementById('list-search').addEventListener('click', () => {
+      const v = Number(document.getElementById('list-val').value);
+      let p = listHead, i = 0;
+      const type = getListType();
+      const seen = new Set();
+      while (p && !seen.has(p)) {
+        seen.add(p);
+        if (p.val === v) { renderList(i); return; }
+        p = p.next;
+        if (type === 'circular' && p === listHead) break;
+        i++;
+      }
+      renderList(-1);
+    });
+    document.getElementById('list-reset').addEventListener('click', () => { listHead = null; renderList(); });
+
+    // ========== HASH ==========
+    const HASH_SIZE = 7;
+    let hashTable = null;
+    let hashClosed = null;
+    function hashFn(k) { return ((k % HASH_SIZE) + HASH_SIZE) % HASH_SIZE; }
+    function renderHash() {
+      const el = document.getElementById('hash-viz');
+      const method = document.getElementById('hash-method').value;
+      el.innerHTML = '';
+      if (method === 'open') {
+        hashClosed = null;
+        if (!hashTable) hashTable = Array.from({ length: HASH_SIZE }, () => []);
+        for (let i = 0; i < HASH_SIZE; i++) {
+          const b = document.createElement('div');
+          b.className = 'hash-bucket';
+          b.innerHTML = '<span style="font-size:0.75rem;color:var(--text-muted)">' + i + '</span>';
+          (hashTable[i] || []).forEach(k => {
+            const s = document.createElement('span');
+            s.className = 'chain-item';
+            s.textContent = k;
+            b.appendChild(s);
+          });
+          el.appendChild(b);
+        }
+      } else {
+        hashTable = null;
+        if (!hashClosed) hashClosed = Array(HASH_SIZE).fill(null);
+        for (let i = 0; i < HASH_SIZE; i++) {
+          const b = document.createElement('div');
+          b.className = 'hash-bucket';
+          b.innerHTML = '<span style="font-size:0.75rem;color:var(--text-muted)">' + i + '</span> ';
+          if (hashClosed[i] != null) {
+            const s = document.createElement('span');
+            s.className = 'chain-item';
+            s.textContent = hashClosed[i];
+            b.appendChild(s);
+          }
+          el.appendChild(b);
+        }
+      }
+    }
+    document.getElementById('hash-insert').addEventListener('click', () => {
+      const k = Number(document.getElementById('hash-key').value);
+      const method = document.getElementById('hash-method').value;
+      if (method === 'open') {
+        if (!hashTable) hashTable = Array.from({ length: HASH_SIZE }, () => []);
+        const idx = hashFn(k);
+        hashTable[idx].push(k);
+      } else {
+        if (!hashClosed) hashClosed = Array(HASH_SIZE).fill(null);
+        let idx = hashFn(k);
+        for (let i = 0; i < HASH_SIZE; i++) {
+          const slot = (idx + i) % HASH_SIZE;
+          if (hashClosed[slot] == null) { hashClosed[slot] = k; break; }
+        }
+      }
+      renderHash();
+    });
+    document.getElementById('hash-reset').addEventListener('click', () => {
+      hashTable = null;
+      hashClosed = null;
+      renderHash();
+    });
+    document.getElementById('hash-method').addEventListener('change', () => {
+      hashTable = null;
+      hashClosed = null;
+      renderHash();
+    });
+
+    // ========== QUEUE ==========
+    let queueData = [];
+    let queueCircularSlots = [];
+    const QUEUE_CAP = 8;
+    let queueFront = 0, queueRear = -1, queueCount = 0;
+    function renderQueue() {
+      const el = document.getElementById('queue-viz');
+      const type = document.getElementById('queue-type').value;
+      el.innerHTML = '';
+      if (type === 'linear') {
+        queueData.forEach((v) => {
+          const c = document.createElement('div');
+          c.className = 'queue-cell';
+          c.textContent = v;
+          el.appendChild(c);
+        });
+      } else {
+        for (let i = 0; i < QUEUE_CAP; i++) {
+          const c = document.createElement('div');
+          c.className = 'queue-cell';
+          const idx = (queueFront + i) % QUEUE_CAP;
+          if (i < queueCount && queueCircularSlots[idx] != null) c.textContent = queueCircularSlots[idx];
+          else c.textContent = '—';
+          el.appendChild(c);
+        }
+      }
+    }
+    document.getElementById('queue-enqueue').addEventListener('click', () => {
+      const v = Number(document.getElementById('queue-val').value);
+      const type = document.getElementById('queue-type').value;
+      if (type === 'circular') {
+        if (queueCount >= QUEUE_CAP) return;
+        if (!queueCircularSlots.length) queueCircularSlots = Array(QUEUE_CAP).fill(null);
+        queueRear = (queueRear + 1) % QUEUE_CAP;
+        queueCircularSlots[queueRear] = v;
+        queueCount++;
+      } else {
+        queueData.push(v);
+      }
+      renderQueue();
+    });
+    document.getElementById('queue-dequeue').addEventListener('click', () => {
+      const type = document.getElementById('queue-type').value;
+      if (type === 'circular') {
+        if (queueCount === 0) return;
+        queueCircularSlots[queueFront] = null;
+        queueFront = (queueFront + 1) % QUEUE_CAP;
+        queueCount--;
+      } else {
+        if (queueData.length) queueData.shift();
+      }
+      renderQueue();
+    });
+    document.getElementById('queue-reset').addEventListener('click', () => {
+      queueData = [];
+      queueCircularSlots = [];
+      queueFront = 0;
+      queueRear = -1;
+      queueCount = 0;
+      renderQueue();
+    });
+    document.getElementById('queue-type').addEventListener('change', () => {
+      queueData = [];
+      queueCircularSlots = [];
+      queueFront = 0;
+      queueRear = -1;
+      queueCount = 0;
+      renderQueue();
+    });
+
+    // ========== INIT & EVENT BINDING ==========
+    function initSearchArray() {
+      const custom = parseCustomArray(document.getElementById('search-custom-array').value);
+      const size = parseInt(document.getElementById('search-size').value, 10) || 16;
+      searchState.array = custom && custom.length > 0 ? custom : randomArray(Math.min(size, 40));
+      if (document.getElementById('search-algo').value === 'binary') {
+        searchState.array = [...searchState.array].sort((a, b) => a - b);
+      }
+      searchState.running = false;
+      searchState.paused = false;
+      renderSearchBars(searchState.array);
+      updateSearchStats(0, '-', -1, document.getElementById('search-algo').value);
+    }
+
+    function initSortArray() {
+      const custom = parseCustomArray(document.getElementById('sort-custom-array').value);
+      const size = parseInt(document.getElementById('sort-size').value, 10) || 16;
+      sortState.array = custom && custom.length > 0 ? custom : randomArray(Math.min(size, 40));
+      sortState.running = false;
+      sortState.paused = false;
+      renderSortBars(sortState.array);
+      updateSortStats(0, 0, -1, document.getElementById('sort-algo').value);
+    }
+
+    // Tabs
+    document.querySelectorAll('.tab').forEach(tab => {
+      tab.addEventListener('click', () => {
+        document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+        document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById('panel-' + tab.dataset.tab).classList.add('active');
+        const t = tab.dataset.tab;
+        if (t === 'search') initSearchArray();
+        else if (t === 'sort') initSortArray();
+        else if (t === 'stack') renderStack();
+        else if (t === 'list') renderList();
+        else if (t === 'hash') renderHash();
+        else if (t === 'queue') renderQueue();
+      });
+    });
+
+    // Search panel
+    document.getElementById('search-algo').addEventListener('change', () => {
+      document.getElementById('search-description').textContent = searchDescriptions[document.getElementById('search-algo').value];
+      initSearchArray();
+    });
+    document.getElementById('search-description').textContent = searchDescriptions[document.getElementById('search-algo').value];
+
+    document.getElementById('search-generate').addEventListener('click', initSearchArray);
+    document.getElementById('search-start').addEventListener('click', () => {
+      if (searchState.running) return;
+      searchState.running = true;
+      searchState.paused = false;
+      runSearch();
+    });
+    document.getElementById('search-pause').addEventListener('click', () => {
+      searchState.paused = !searchState.paused;
+      document.getElementById('search-pause').textContent = searchState.paused ? 'Resume' : 'Pause';
+    });
+    document.getElementById('search-reset').addEventListener('click', () => {
+      searchState.running = false;
+      searchState.paused = false;
+      initSearchArray();
+    });
+
+    // Sort panel
+    document.getElementById('sort-algo').addEventListener('change', () => {
+      document.getElementById('sort-description').textContent = sortDescriptions[document.getElementById('sort-algo').value];
+      updateSortStats(sortState.comparisons, sortState.swaps, -1, document.getElementById('sort-algo').value);
+    });
+    document.getElementById('sort-description').textContent = sortDescriptions[document.getElementById('sort-algo').value] || sortDescriptions.bubble;
+
+    document.getElementById('sort-generate').addEventListener('click', initSortArray);
+    document.getElementById('sort-start').addEventListener('click', () => {
+      if (sortState.running) return;
+      sortState.running = true;
+      sortState.paused = false;
+      runSort();
+    });
+    document.getElementById('sort-pause').addEventListener('click', () => {
+      sortState.paused = !sortState.paused;
+      document.getElementById('sort-pause').textContent = sortState.paused ? 'Resume' : 'Pause';
+    });
+    document.getElementById('sort-reset').addEventListener('click', () => {
+      sortState.running = false;
+      sortState.paused = false;
+      initSortArray();
+    });
+
+    // Initial render
+    initSearchArray();
+    initSortArray();
+  </script>
+</body>
+</html>
