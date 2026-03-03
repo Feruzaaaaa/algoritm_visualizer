@@ -1,22 +1,23 @@
-# Визуализация алгоритмов поиска и сортировки
+# algoritm_visualizer
 
-Dashboard для пошаговой визуализации алгоритмов поиска и сортировки с анимациями и статистикой.
+Dashboard for step-by-step visualization of search and sorting algorithms, with animations and statistics.
 
-## Запуск
+## Run
 
-Откройте файл `index.html` в браузере (двойной клик или через Live Server).
+Open `index.html` in your browser, or use a local server:
 
 ```bash
-# Или с помощью простого HTTP-сервера:
 cd algorithm-visualizer
 python3 -m http.server 8080
-# Откройте http://localhost:8080
+# Open http://localhost:8080
 ```
 
-## Возможности
+## Features
 
-- **Поиск:** Linear Search, Binary Search — подсветка текущего и найденного элемента, счётчик шагов, сложность O(n) / O(log n).
-- **Сортировка:** Bubble, Selection, Insertion, Merge, Quick Sort — подсветка сравнений и перестановок, счётчики сравнений/перестановок и время.
-- Настройка размера массива и скорости анимации.
-- Случайный массив или ввод своих чисел через запятую.
-- Кнопки: Старт, Пауза, Сброс.
+- **Search:** Linear Search, Binary Search — step count, time complexity O(n) / O(log n).
+- **Sorting:** Bubble, Selection, Insertion, Radix, Counting, Merge, Quick Sort — comparisons, swaps, time/space complexity.
+- **Stack:** Push, Pop; RPN (Reverse Polish Notation) evaluation.
+- **Linked List:** Singly, Double, Circular — insert, delete, search.
+- **Hash:** Open hashing (chaining), Closed hashing (linear probing).
+- **Queue:** Enqueue, Dequeue; Linear and Circular queue.
+- Configurable array size and animation speed; custom or random arrays.
